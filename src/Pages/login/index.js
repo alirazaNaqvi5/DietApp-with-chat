@@ -1,10 +1,13 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import { Link } from "react-router-dom";
 import { authentication } from "../../firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { useAuth } from "../../hooks/useAuth";
 
 function Login(){
 
+  
+ const {login} = useAuth();
 
   const [number, setNumber] = useState('');
   const [showOTP, setShowOTP] = useState("hidden");
@@ -30,6 +33,7 @@ function Login(){
     setShowOTP("relative mb-4 ");
     window.confirmationResult = confirmationResult;
     console.log(confirmationResult);
+
     // ...
   }).catch((error) => {
     // Error; SMS not sent
@@ -44,6 +48,8 @@ function Login(){
     window.confirmationResult.confirm(e.target.value).then((result) => {
       // User signed in successfully.
       console.log(result);
+      login(result);
+
       // ...
     }).catch((error) => {
       // User couldn't sign in (bad verification code?)

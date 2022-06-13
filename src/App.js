@@ -1,33 +1,41 @@
-import './App.css';
-import Home from './Pages/Home/index';
-import { BrowserRouter,Routes,Route } from 'react-router-dom';
-import SignUp from './Pages/Signup/index';
-import Dashboard from './Pages/dashboard/Index';
-import Doctor from './Pages/Doctor/Index';
-import Login from './Pages/login/index';
-
-
+import "./App.css";
+import Home from "./Pages/Home/index";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SignUp from "./Pages/Signup/index";
+import Dashboard from "./Pages/dashboard/Index";
+import Doctor from "./Pages/Doctor/Index";
+import Login from "./Pages/login/index";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AuthProvider} from "./hooks/useAuth";
 
 function App() {
+  // const [user, setUser] = useState(null);
+
   return (
-    <BrowserRouter>
-    <Routes>
-    
-    <Route path='/Login' element={<Login/>}/>
+    // <user.Provider value={{ user, setUser }}>
+      <BrowserRouter>
+      <AuthProvider>
+        <Routes>
 
-      <Route path='/' element={<Home/>}/>
-      <Route path='/signup' element={<SignUp/>}/>
-      <Route path='/dashboard' element={<Dashboard/>}/>
-      <Route path='/Doctor' element={<Doctor/>}/>
+          <Route path="/Login" element={<Login />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+            
+            } />
+          <Route path="/Doctor" element={
+            <ProtectedRoute>
+              <Doctor />
+            </ProtectedRoute>
+            } />
+        </Routes>
+        </AuthProvider>
 
-
-
-      
-    </Routes>
-    
-    
-    </BrowserRouter>
-    
+      </BrowserRouter>
+    // </user.Provider>
   );
 }
 
