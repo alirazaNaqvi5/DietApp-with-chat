@@ -1,8 +1,26 @@
 import React from "react";
 import { useState } from "react";
+import {db} from "../../firebase";
+import { doc, setDoc, getDoc  } from "firebase/firestore";
+import {useAuth} from "../../hooks/useAuth";
 
 function SignUp() {
+  const {user} = useAuth();
   const [formType, setFormType] = useState("1");
+  const [Patient, setPatient] = useState({
+    name: "",
+    email: "",
+    type:"patient",
+  });
+  const [Doctor, setDoctor] = useState({
+    name: "",
+    email: "",
+    type:"doctor",
+    age: "",
+    phone: `${user.phoneNumber}`,
+    address: "",
+    experience: "",
+  });
   return (
     <div
       
@@ -27,7 +45,7 @@ function SignUp() {
         } z-10 shadow-md"
         >
           <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">
-            Register Now
+            Personel Information
           </h2>
           <p className="leading-relaxed mb-5 text-gray-600">
             {" "}
@@ -77,15 +95,19 @@ function SignUp() {
             <>
             <div className="relative mb-4">
                 <label
-                  htmlFor="UserName"
+                  htmlFor="name"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  username
+                  Name
                 </label>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
+                  onChange={(e) => {
+                    setPatient({ ...Patient, name: e.target.value });
+                  }
+                  }
+                  type="text"
+                  id="name"
+                  name="name"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
               </div>
@@ -97,13 +119,17 @@ function SignUp() {
                   Email
                 </label>
                 <input
+                  onChange={(e) => {
+                    setPatient({ ...Patient, email: e.target.value });
+                  }
+                  }
                   type="email"
                   id="email"
                   name="email"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
               </div>
-              <div className="relative mb-4">
+              {/* <div className="relative mb-4">
                 <label
                   htmlFor="Password"
                   className="leading-7 text-sm text-gray-600"
@@ -130,11 +156,11 @@ function SignUp() {
                   name="Confirm password"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
-              </div>
+              </div> */}
             </>
           ) : (
             <>
-             <div className="relative mb-4">
+             {/* <div className="relative mb-4">
                 <label
                   htmlFor="UserName"
                   className="leading-7 text-sm text-gray-600"
@@ -147,7 +173,7 @@ function SignUp() {
                   name="email"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
-              </div>
+              </div> */}
               <div className="relative mb-4">
                 <label
                   htmlFor="Name"
@@ -156,6 +182,10 @@ function SignUp() {
                   Name
                 </label>
                 <input
+                  onChange={(e) => {
+                    setDoctor({ ...Doctor, name: e.target.value });
+                  }
+                  }
                   type="Name"
                   id="Name"
                   name="Name"
@@ -171,13 +201,17 @@ function SignUp() {
                   Email
                 </label>
                 <input
+                  onChange={(e) => {
+                    setDoctor({ ...Doctor, email: e.target.value });
+                  }
+                  }
                   type="email"
                   id="email"
                   name="email"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
               </div>
-              <div className="relative mb-4">
+              {/* <div className="relative mb-4">
                 <label
                   htmlFor="Password"
                   className="leading-7 text-sm text-gray-600"
@@ -190,7 +224,7 @@ function SignUp() {
                   name="password"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
-              </div>
+              </div> */}
               <div className="relative mb-4">
                 <label
                   htmlFor="Age"
@@ -199,13 +233,17 @@ function SignUp() {
                   Age
                 </label>
                 <input
+                  onChange={(e) => {
+                    setDoctor({ ...Doctor, age: e.target.value });
+                  }
+                  }
                   type="number"
                   id="age"
                   name="Age"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
               </div>
-              <div className="relative mb-4">
+              {/* <div className="relative mb-4">
                 <label
                   htmlFor="Contact"
                   className="leading-7 text-sm text-gray-600"
@@ -213,12 +251,16 @@ function SignUp() {
                   Contact
                 </label>
                 <input
+                  onChange={(e) => {
+                    setDoctor({ ...Doctor, phone: e.target.value });
+                  }
+                }
                   type="tel"
                   id="num"
                   name="num"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
-              </div>
+              </div> */}
               <div className="relative mb-4">
                 <label
                   htmlFor="Adress"
@@ -227,6 +269,10 @@ function SignUp() {
                   Address
                 </label>
                 <input
+                  onChange={(e) => {
+                    setDoctor({ ...Doctor, address: e.target.value });
+                  }
+                }
                   type="Address"
                   id="address"
                   name="Address"
@@ -241,6 +287,10 @@ function SignUp() {
                   Experience and About
                 </label>
                 <input
+                  onChange={(e) => {
+                    setDoctor({ ...Doctor, experience: e.target.value });
+                  }
+                }
                   type="text"
                   id="text"
                   name="text"
@@ -278,7 +328,48 @@ function SignUp() {
             </>
           )}
 
-          <button className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+          <button
+            onClick={async() => {
+              if (formType==="1") {
+               
+                  const docRef = doc(db, "users", `${user.phoneNumber}` );
+                  // const docSnap = await getDoc(docRef);
+                  // if (docSnap.exists()) {
+                  //   console.log("Document data:", docSnap.data());
+                    // const data = [{
+                    //   newRef:
+                    // }];
+                    // setDoc(docRef, data);
+                    // const data = {};
+                    setDoc(docRef, Patient);
+      
+                  // } else {
+                  //   // doc.data() will be undefined in this case
+                  //   console.log("No such document!");
+                  // }
+                  
+                
+              }
+              else if(formType === "2"){
+
+                const docRef = doc(db, "users", `${user.phoneNumber}` );
+                // const docSnap = await getDoc(docRef);
+                // if (docSnap.exists()) {
+                //   console.log("Document data:", docSnap.data());
+                  // const data = [{
+                  //   newRef:
+                  // }];
+                  // setDoc(docRef, data);
+                  // const data = {};
+                  setDoc(docRef, Doctor);
+    
+                // } else {
+                //   // doc.data() will be undefined in this case
+                //   console.log("No such document!");
+                // }
+
+              }}}
+            className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
             SUBMIT
           </button>
         </div>

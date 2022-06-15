@@ -48,7 +48,7 @@ function Login(){
     window.confirmationResult.confirm(e.target.value).then((result) => {
       // User signed in successfully.
       console.log(result);
-      login(result);
+      login(result.user);
 
       // ...
     }).catch((error) => {

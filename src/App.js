@@ -7,7 +7,7 @@ import Doctor from "./Pages/Doctor/Index";
 import Login from "./Pages/login/index";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider} from "./hooks/useAuth";
-
+import Admin from "./Pages/admin/index";
 function App() {
   // const [user, setUser] = useState(null);
 
@@ -20,6 +20,8 @@ function App() {
           <Route path="/Login" element={<Login />} />
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/admin" element={<Admin />} />
+
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />

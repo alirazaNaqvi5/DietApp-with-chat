@@ -1,8 +1,19 @@
-import React from "react";
-import {db} from "../../firebase";
-import { doc, setDoc, getDoc  } from "firebase/firestore";
+import React, { useEffect } from "react";
+import { db } from "../../firebase";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Dashboard() {
+  useEffect(() => {}, []);
+
   return (
     // <>
     <div id="patient" className="container px-5 py-24 mx-auto">
@@ -32,8 +43,9 @@ export default function Dashboard() {
       <br />
       <div className="flex justify-center text-center">
         <button
+          // onClick={}
           onClick={async() => {
-            const docRef = doc(db, "PatientProblems", "Shayan" );
+            const docRef = doc(db, "users", "Shayan" );
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
               console.log("Document data:", docSnap.data());
@@ -50,7 +62,7 @@ export default function Dashboard() {
               // doc.data() will be undefined in this case
               console.log("No such document!");
             }
-            
+
           }}
           className=" text-white bg-green-500 border-0 py-2 px-8  text-2xl font-bold focus:outline-none hover:bg-green-600 rounded "
         >
