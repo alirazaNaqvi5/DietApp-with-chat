@@ -3,14 +3,19 @@ import { useState } from "react";
 import {db} from "../../firebase";
 import { doc, setDoc, getDoc  } from "firebase/firestore";
 import {useAuth} from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+
 
 function SignUp() {
-  const {user} = useAuth();
+  const {user, login} = useAuth();
+  const navigate = useNavigate();
   const [formType, setFormType] = useState("1");
   const [Patient, setPatient] = useState({
     name: "",
     email: "",
     type:"patient",
+    phone: `${user.phoneNumber}`,
+    assignD: "",
   });
   const [Doctor, setDoctor] = useState({
     name: "",
@@ -20,6 +25,7 @@ function SignUp() {
     phone: `${user.phoneNumber}`,
     address: "",
     experience: "",
+    status: false,
   });
   return (
     <div
@@ -342,6 +348,8 @@ function SignUp() {
                     // setDoc(docRef, data);
                     // const data = {};
                     setDoc(docRef, Patient);
+                    login({phoneNumber:user.phoneNumber});
+                    // navigate("/dashboard");
       
                   // } else {
                   //   // doc.data() will be undefined in this case
@@ -352,7 +360,7 @@ function SignUp() {
               }
               else if(formType === "2"){
 
-                const docRef = doc(db, "users", `${user.phoneNumber}` );
+                const docRef = doc(db, "doctors", `${user.phoneNumber}` );
                 // const docSnap = await getDoc(docRef);
                 // if (docSnap.exists()) {
                 //   console.log("Document data:", docSnap.data());
@@ -362,6 +370,10 @@ function SignUp() {
                   // setDoc(docRef, data);
                   // const data = {};
                   setDoc(docRef, Doctor);
+                  // navigate("/doctor");
+                  login({phoneNumber:user.phoneNumber});
+
+
     
                 // } else {
                 //   // doc.data() will be undefined in this case

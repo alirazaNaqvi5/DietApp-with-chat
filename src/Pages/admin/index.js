@@ -1,4 +1,5 @@
 import React from 'react'
+import Modal from '../../components/Modal';
 
 export default function Admin() {
   return (
@@ -7,14 +8,16 @@ export default function Admin() {
     <h2 className="text-center justify-center mt-4 text-black bg-red-500 font-bold ">Admin's Panel</h2>
         <div className="flex-grow p-6 text-center mt-6">
         <label className="font-semibold p-1" for="Requests">select an option to view requests:</label>
+        <br/>
     
-    <select className="border font-semibold flex-col hover:bg-gray-300 ml-4" name="requests" id="req">
+    {/* <select className="border font-semibold flex-col hover:bg-gray-300 ml-4" name="requests" id="req">
     <option className="border font-semibold hover:bg-gray-300" value="sr">select requests</option>
     
       <option className="border font-semibold hover:bg-gray-300" value="pr">pending requests</option>
       <option className="border font-semibold hover:bg-gray-300" value="ar">approved requests</option>
       
-    </select>
+    </select> */}
+    <Modal/>
               </div>
         <section class="text-gray-600 body-font">
       <div className="container px-5 py-24 mx-auto flex flex-wrap">

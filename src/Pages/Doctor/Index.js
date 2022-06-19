@@ -1,8 +1,40 @@
 import React from "react";
 import Chat from "../../components/Chat";
+import { MessageCard } from "./MessageCard";
 
+import { db } from "../../firebase";
+import { collection, query, where, getDocs, doc, setDocs, onSnapshot, orderBy } from "firebase/firestore";
 function Doctor() {
   const [visible, setVisible] = React.useState(false);
+  const [data, setData] = React.useState([]);
+
+  React.useEffect(() => {
+(   async()=>{ 
+  const subColRef = collection(db, "+923211737891", "+923231552270", "chat");
+// odd number of path segments to get a CollectionReference
+
+// equivalent to:
+// .collection("collection_name/doc_name/subcollection_name") in v8
+
+// use getDocs() instead of getDoc() to fetch the collection
+
+// const qSnap =await getDocs(subColRef)
+// get realtime messages
+onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
+  const docs = qSnap.docs.map((doc) => {
+    console.log(doc.data());
+    return doc.data();
+  }
+  );
+  setData(docs);
+}
+);
+// setData(qSnap.docs.map(d => (d.data())).reverse())
+// console.log(qSnap.docs.map(d => (d.data())))
+
+})();
+
+  }, []);
   return (
     <>
       <section class="text-gray-600 body-font">
@@ -20,6 +52,66 @@ function Doctor() {
               health plans, current diets, and diet restrictions.
             </h3>
           </div>
+          {/* <MessageCard/> */}
+{/* ================================================ message cards */}
+
+
+
+
+<section className="text-gray-600 body-font">
+  <div className="container px-5 py-24 mx-auto">
+    <div className="flex flex-col text-center w-full mb-20">
+      <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Messages From Patients</h1>
+    </div>
+    <div className="flex flex-wrap -m-2">
+      <div className="p-2 lg:w-auto md:w-1/2 w-auto">
+        <div className="h-full flex items-center border-gray-200 border p-4 rounded-lg">
+          <div className="flex-grow">
+            <h2 className="text-gray-900 title-font font-medium">Holden Caulfield</h2>
+            
+          </div>
+        </div>
+      </div>
+    
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{/* ================================================================= */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
             <div className="p-2 sm:w-1/2 w-full">
               <div className="bg-gray-100 rounded flex p-4 h-full items-center">
@@ -147,7 +239,7 @@ function Doctor() {
           </button>
         </div>
         {/* <div > */}
-        <Chat visible={visible} setVisible={setVisible} />
+        <Chat visible={visible} setVisible={setVisible} data={data} />
       {/* </div> */}
       </section>
       

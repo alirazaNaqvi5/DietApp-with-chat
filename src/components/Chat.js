@@ -1,6 +1,9 @@
 import React from 'react'
+import { collection, query, where, getDocs, doc, addDoc, onSnapshot, serverTimestamp  } from "firebase/firestore";
+import {db} from "../../src/firebase"
 
-function Chat({ visible, setVisible }) {
+function Chat({ visible, setVisible, data }) {
+  const [messages, setMessages] = React.useState("");
   return (
     
        <>
@@ -93,6 +96,36 @@ function Chat({ visible, setVisible }) {
             </div>
           </div>
 
+
+            {/* create a message item */}
+            <div className="flex-1  py-2 overflow-scroll">
+              
+              {
+                data.map((item, index) => (
+                  item.messegefrom == "patient" ?
+                  <div className="flex flex-col " key={index}>
+                <div className="flex-1 min-w-0 p-2 lg:h-auto  lg:w-[90%] bg-gray-200 rounded-3xl mt-[16px]">
+                  <p className="text-lg  text-gray-600 text-left w-full"> {item.message}</p>
+                </div>
+              </div>
+              :
+              <div className="flex flex-col items-end " key={index}>
+              <div className="flex-1 min-w-0 p-2 lg:h-auto  lg:w-[90%] bg-blue-200 rounded-3xl mt-[16px]">
+                <p className="text-lg  text-gray-600 text-right w-full">{item.message}</p>
+              </div>
+            </div>
+
+                ))
+              }
+              
+
+
+             
+
+
+            </div>
+
+
           <div class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
             <div class="relative flex">
               <span class="absolute inset-y-0 flex items-center">
@@ -116,16 +149,34 @@ function Chat({ visible, setVisible }) {
                   </svg>
                 </button>
               </span>
+
+
+            
+             
+
+
+
               <input
                 type="text"
                 placeholder="Write your message!"
                 class="w-[70%] focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
+                onChange={(e)=>{
+                  setMessages(e.target.value)
+                }}
               />
               <div class="absolute right-0 items-center inset-y-0 hidden sm:flex">
                 
                 <button
                   type="button"
                   class="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
+                  onClick={async()=>{
+                    const subColRef = collection(db, "+923211737891", "+923231552270", "chat");
+                    await addDoc(subColRef,{
+                      message: messages,
+                      messegefrom: "doctor",
+                      time: serverTimestamp()
+                    });
+                  }}
                 >
                   <span class="font-bold">Send</span>
                   <svg
