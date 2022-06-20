@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { db } from "../../firebase";
 import {
   doc,
@@ -8,11 +8,44 @@ import {
   query,
   where,
   onSnapshot,
+  serverTimestamp,
+  orderBy
 } from "firebase/firestore";
 import { useAuth } from "../../hooks/useAuth";
+import ChatPatient from "./ChatPatient";
 
 export default function Dashboard() {
-  useEffect(() => {}, []);
+  const { user } = useAuth();
+  const [msg, setMsg] = React.useState("");
+  const [visible, setVisible] = React.useState(false);
+  const [data, setData] = React.useState([]);
+  React.useEffect(() => {
+    (   async()=>{ 
+      const subColRef = collection(db, `${user.assignD}`, `${user.phone}`, "chat");
+    // odd number of path segments to get a CollectionReference
+    
+    // equivalent to:
+    // .collection("collection_name/doc_name/subcollection_name") in v8
+    
+    // use getDocs() instead of getDoc() to fetch the collection
+    
+    // const qSnap =await getDocs(subColRef)
+    // get realtime messages
+    onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
+      const docs = qSnap.docs.map((doc) => {
+        console.log(doc.data());
+        return doc.data();
+      }
+      );
+      setData(docs);
+    }
+    );
+    // setData(qSnap.docs.map(d => (d.data())).reverse())
+    // console.log(qSnap.docs.map(d => (d.data())))
+    
+    })();
+    
+      }, []);
 
   return (
     // <>
@@ -36,7 +69,10 @@ export default function Dashboard() {
             Write about your problem ?
           </label>
 
-          <textarea className="w-full  bg-white  rounded border border-gray-300 focus:border-indigo-500 focus:bg-transparent focus:ring-2 focus:ring-indigo-200  outline-none text-black py-1 text-xl font-bold px-3 leading-8 transition-colors duration-200 ease-in-out"></textarea>
+          <textarea
+            onChange={(e) => setMsg(e.target.value)}
+            value={msg}
+            className="w-full  bg-white  rounded border border-gray-300 focus:border-indigo-500 focus:bg-transparent focus:ring-2 focus:ring-indigo-200  outline-none text-black py-1 text-xl font-bold px-3 leading-8 transition-colors duration-200 ease-in-out"></textarea>
         </div>
         <br />
       </div>
@@ -45,23 +81,32 @@ export default function Dashboard() {
         <button
           // onClick={}
           onClick={async() => {
-            const docRef = doc(db, "users", "Shayan" );
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-              console.log("Document data:", docSnap.data());
-              // const data = [{
-              //   newRef:
-              // }];
-              // setDoc(docRef, data);
-              // const data = {};
-              setDoc(docRef,{
-                status: 0,
-                  problem: "test2"} , { merge: false });
-
-            } else {
-              // doc.data() will be undefined in this case
-              console.log("No such document!");
+            const docRef = collection(db, `${user.assignD}`, `${user.phone}`, "chat");
+            setDoc(docRef,{
+              time: serverTimestamp(),
+              message: msg,
+              messegefrom: "patient"
+            }).then(() => {
+              setMsg("");
+              setVisible(true);
             }
+            );
+            // const docSnap = await getDoc(docRef);
+            // if (docSnap.exists()) {
+            //   console.log("Document data:", docSnap.data());
+            //   // const data = [{
+            //   //   newRef:
+            //   // }];
+            //   // setDoc(docRef, data);
+            //   // const data = {};
+            //   setDoc(docRef,{
+            //     status: 0,
+            //       problem: "test2"} , { merge: false });
+
+            // } else {
+            //   // doc.data() will be undefined in this case
+            //   console.log("No such document!");
+            // }
 
           }}
           className=" text-white bg-green-500 border-0 py-2 px-8  text-2xl font-bold focus:outline-none hover:bg-green-600 rounded "
@@ -87,6 +132,8 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      <ChatPatient visible={visible} setVisible={setVisible} data={data} />
+
     </div>
   );
 }

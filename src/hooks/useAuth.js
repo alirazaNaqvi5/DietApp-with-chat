@@ -100,6 +100,9 @@ export const AuthProvider = ({ children }) => {
             navigate("/dashboard");
           })
           }
+          else{
+            navigate("/dashboard");
+          }
         }
         else{
         navigate("/signup");

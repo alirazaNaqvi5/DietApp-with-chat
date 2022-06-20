@@ -1,16 +1,18 @@
 import React from "react";
 import Chat from "../../components/Chat";
 import { MessageCard } from "./MessageCard";
+import { useAuth } from "../../hooks/useAuth";
 
 import { db } from "../../firebase";
 import { collection, query, where, getDocs, doc, setDocs, onSnapshot, orderBy } from "firebase/firestore";
 function Doctor() {
+  const { user } = useAuth();
   const [visible, setVisible] = React.useState(false);
   const [data, setData] = React.useState([]);
 
   React.useEffect(() => {
 (   async()=>{ 
-  const subColRef = collection(db, "+923211737891", "+923231552270", "chat");
+  const subColRef = collection(db, `${user.phone}`, "+923211737891", "chat");
 // odd number of path segments to get a CollectionReference
 
 // equivalent to:

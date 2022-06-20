@@ -1,9 +1,9 @@
 import React from 'react'
 import { collection, query, where, getDocs, doc, addDoc, onSnapshot, serverTimestamp  } from "firebase/firestore";
-import {db} from "../../src/firebase"
-import {useAuth} from "../hooks/useAuth"
+import {db} from "../../firebase";
+import {useAuth} from "../../hooks/useAuth"
 
-function Chat({ visible, setVisible, data }) {
+function ChatPatient({ visible, setVisible, data }) {
   const [messages, setMessages] = React.useState("");
   const {user} = useAuth();
   return (
@@ -172,10 +172,10 @@ function Chat({ visible, setVisible, data }) {
                   type="button"
                   class="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
                   onClick={async()=>{
-                    const subColRef = collection(db, `${user.phone}`, "+923231552270", "chat");
+                    const subColRef = collection(db, `${user.assignD}`, `${user.number}`, "chat");
                     await addDoc(subColRef,{
                       message: messages,
-                      messegefrom: "doctor",
+                      messegefrom: "patient",
                       time: serverTimestamp()
                     });
                   }}
@@ -214,4 +214,4 @@ function Chat({ visible, setVisible, data }) {
   )
 }
 
-export default Chat
+export default ChatPatient
