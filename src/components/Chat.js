@@ -3,7 +3,7 @@ import { collection, query, where, getDocs, doc, addDoc, onSnapshot, serverTimes
 import {db} from "../../src/firebase"
 import {useAuth} from "../hooks/useAuth"
 
-function Chat({ visible, setVisible, data }) {
+function Chat({ visible, setVisible, data, sender }) {
   const [messages, setMessages] = React.useState("");
   const {user} = useAuth();
   return (
@@ -159,6 +159,7 @@ function Chat({ visible, setVisible, data }) {
 
 
               <input
+                value={messages}
                 type="text"
                 placeholder="Write your message!"
                 class="w-[70%] focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
@@ -172,12 +173,13 @@ function Chat({ visible, setVisible, data }) {
                   type="button"
                   class="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
                   onClick={async()=>{
-                    const subColRef = collection(db, `${user.phone}`, "+923231552270", "chat");
+                    const subColRef = collection(db, `${user.phone}`, sender.toString(), "chat");
                     await addDoc(subColRef,{
                       message: messages,
                       messegefrom: "doctor",
                       time: serverTimestamp()
                     });
+                    setMessages("")
                   }}
                 >
                   <span class="font-bold">Send</span>

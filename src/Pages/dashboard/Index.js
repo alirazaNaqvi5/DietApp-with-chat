@@ -6,6 +6,7 @@ import {
   getDoc,
   collection,
   query,
+  addDoc,
   where,
   onSnapshot,
   serverTimestamp,
@@ -20,32 +21,32 @@ export default function Dashboard() {
   const [visible, setVisible] = React.useState(false);
   const [data, setData] = React.useState([]);
   React.useEffect(() => {
-    (   async()=>{ 
+    (async () => {
       const subColRef = collection(db, `${user.assignD}`, `${user.phone}`, "chat");
-    // odd number of path segments to get a CollectionReference
-    
-    // equivalent to:
-    // .collection("collection_name/doc_name/subcollection_name") in v8
-    
-    // use getDocs() instead of getDoc() to fetch the collection
-    
-    // const qSnap =await getDocs(subColRef)
-    // get realtime messages
-    onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
-      const docs = qSnap.docs.map((doc) => {
-        console.log(doc.data());
-        return doc.data();
+      // odd number of path segments to get a CollectionReference
+
+      // equivalent to:
+      // .collection("collection_name/doc_name/subcollection_name") in v8
+
+      // use getDocs() instead of getDoc() to fetch the collection
+
+      // const qSnap =await getDocs(subColRef)
+      // get realtime messages
+      onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
+        const docs = qSnap.docs.map((doc) => {
+          console.log(doc.data());
+          return doc.data();
+        }
+        );
+        setData(docs);
       }
       );
-      setData(docs);
-    }
-    );
-    // setData(qSnap.docs.map(d => (d.data())).reverse())
-    // console.log(qSnap.docs.map(d => (d.data())))
-    
+      // setData(qSnap.docs.map(d => (d.data())).reverse())
+      // console.log(qSnap.docs.map(d => (d.data())))
+
     })();
-    
-      }, []);
+
+  }, []);
 
   return (
     // <>
@@ -80,17 +81,23 @@ export default function Dashboard() {
       <div className="flex justify-center text-center">
         <button
           // onClick={}
-          onClick={async() => {
-            const docRef = collection(db, `${user.assignD}`, `${user.phone}`, "chat");
-            setDoc(docRef,{
+          onClick={async () => {
+            // const docRef = collection(db, `${user.assignD}`, `${user.phone}`, "chat");
+            const docRef = doc(db, `${user.assignD}`, `${user.phone}`);
+            const colRef = collection(docRef, "chat")
+
+
+
+            addDoc(colRef, {
               time: serverTimestamp(),
               message: msg,
               messegefrom: "patient"
-            }).then(() => {
+            })
+            
+            .then(() => {
               setMsg("");
               setVisible(true);
-            }
-            );
+            });
             // const docSnap = await getDoc(docRef);
             // if (docSnap.exists()) {
             //   console.log("Document data:", docSnap.data());

@@ -4,37 +4,80 @@ import { MessageCard } from "./MessageCard";
 import { useAuth } from "../../hooks/useAuth";
 
 import { db } from "../../firebase";
-import { collection, query, where, getDocs, doc, setDocs, onSnapshot, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, setDocs, onSnapshot, orderBy, collectionGroup } from "firebase/firestore";
 function Doctor() {
   const { user } = useAuth();
   const [visible, setVisible] = React.useState(false);
   const [data, setData] = React.useState([]);
+  const [NewMsg, setNewMsg] = React.useState([]);
+  const [ActiveChat, setActiveChat] = React.useState("");
 
   React.useEffect(() => {
-(   async()=>{ 
-  const subColRef = collection(db, `${user.phone}`, "+923211737891", "chat");
-// odd number of path segments to get a CollectionReference
+    console.log(NewMsg);
+    (async () => {
+      const subColRef = collection(db, `${user.phone}`, `${ActiveChat}`, "chat");
+      // odd number of path segments to get a CollectionReference
 
-// equivalent to:
-// .collection("collection_name/doc_name/subcollection_name") in v8
+      // equivalent to:
+      // .collection("collection_name/doc_name/subcollection_name") in v8
 
-// use getDocs() instead of getDoc() to fetch the collection
+      // use getDocs() instead of getDoc() to fetch the collection
 
-// const qSnap =await getDocs(subColRef)
-// get realtime messages
-onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
-  const docs = qSnap.docs.map((doc) => {
-    console.log(doc.data());
-    return doc.data();
-  }
-  );
-  setData(docs);
-}
-);
-// setData(qSnap.docs.map(d => (d.data())).reverse())
-// console.log(qSnap.docs.map(d => (d.data())))
+      // const qSnap =await getDocs(subColRef)
+      // get realtime messages
+      onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
+        const docs = qSnap.docs.map((doc) => {
+          // console.log(doc.id);
+          return doc.data();
+        }
+        );
+        setData(docs);
+      }
+      );
+      // setData(qSnap.docs.map(d => (d.data())).reverse())
+      // console.log(qSnap.docs.map(d => (d.data())))
 
-})();
+
+      // onSnapshot(collection(db, `${user.phone}`), (qSnap) => {
+      //   const docs = qSnap.docs.forEach((doc) => {
+      //     console.log(doc.id);
+      //     return doc.id;
+      //   }
+      //   );
+      //   setNewMsg(docs);
+      // }
+      // );
+      const docRef = collection(db, `${user.phone}`, "msgs");
+      // const docSnap = await getDocs(docRef);
+      onSnapshot(query(docRef), (qSnap) => {
+        const docs = qSnap.docs.map((doc) => {
+          // console.log(doc.id);
+          return doc.data();
+        }
+        );
+        console.log(docs);
+        // setData(docs);
+      }
+      );
+      // setNewMsg(docSnap.docs);
+      // getDocs(docRef).then((docSnap) => {
+        // docSnap.docs.forEach((doc) => {
+          // console.log(doc.id);
+          // console.log(docSnap)
+          // setNewMsg([...NewMsg, {"sender":doc.id}]);
+        // })
+      // });
+      // const d =[];
+      // docSnap.forEach((doc) => {
+      //   // console.log(doc.id);
+      //   console.log(doc.id, " => ", doc.data());
+      //   return setNewMsg([...NewMsg, doc.id]);
+      // })
+      // console.log("fksdhfkjsdhfsdjkfhsdjkfh==========",NewMsg);
+      // setNewMsg(d);
+      console.log("fksdhfkjsdhfsdjkfhsdjkfh==========",NewMsg);
+
+    })();
 
   }, []);
   return (
@@ -55,29 +98,38 @@ onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
             </h3>
           </div>
           {/* <MessageCard/> */}
-{/* ================================================ message cards */}
+          {/* ================================================ message cards */}
 
 
 
 
-<section className="text-gray-600 body-font">
-  <div className="container px-5 py-24 mx-auto">
-    <div className="flex flex-col text-center w-full mb-20">
-      <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Messages From Patients</h1>
-    </div>
-    <div className="flex flex-wrap -m-2">
-      <div className="p-2 lg:w-auto md:w-1/2 w-auto">
-        <div className="h-full flex items-center border-gray-200 border p-4 rounded-lg">
-          <div className="flex-grow">
-            <h2 className="text-gray-900 title-font font-medium">Holden Caulfield</h2>
-            
-          </div>
-        </div>
-      </div>
-    
-    </div>
-  </div>
-</section>
+          <section className="text-gray-600 body-font">
+
+
+            <div className="container px-5 py-24 mx-auto">
+              <div className="flex flex-col text-center w-full mb-20">
+                <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Messages From Patients</h1>
+              </div>
+              <div className="flex flex-wrap -m-2">
+                {NewMsg.map((msg, i) => {
+
+                  return <div className="p-2 lg:w-auto md:w-1/2 w-auto cursor-pointer" key={i}  onClick={()=>{
+                    setActiveChat(msg.sender);
+                  }} >
+                    <div className="h-full flex items-center border-gray-200 border p-4 rounded-lg">
+                      <div className="flex-grow">
+                        <h2 className="text-gray-900 title-font font-medium">{msg.sender}</h2>
+
+                      </div>
+                    </div>
+                  </div>
+                })
+                }
+              </div>
+            </div>
+
+
+          </section>
 
 
 
@@ -93,7 +145,7 @@ onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
 
 
 
-{/* ================================================================= */}
+          {/* ================================================================= */}
 
 
 
@@ -241,10 +293,10 @@ onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
           </button>
         </div>
         {/* <div > */}
-        <Chat visible={visible} setVisible={setVisible} data={data} />
-      {/* </div> */}
+        <Chat visible={visible} sender={ActiveChat} setVisible={setVisible} data={data} />
+        {/* </div> */}
       </section>
-      
+
     </>
   );
 }

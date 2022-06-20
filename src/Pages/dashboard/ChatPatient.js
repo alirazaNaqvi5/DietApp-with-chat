@@ -104,7 +104,7 @@ function ChatPatient({ visible, setVisible, data }) {
               
               {
                 data.map((item, index) => (
-                  item.messegefrom == "patient" ?
+                  item.messegefrom == "doctor" ?
                   <div className="flex flex-col " key={index}>
                 <div className="flex-1 min-w-0 p-2 lg:h-auto  lg:w-[90%] bg-gray-200 rounded-3xl mt-[16px]">
                   <p className="text-lg  text-gray-600 text-left w-full"> {item.message}</p>
@@ -159,6 +159,7 @@ function ChatPatient({ visible, setVisible, data }) {
 
 
               <input
+                value={messages}
                 type="text"
                 placeholder="Write your message!"
                 class="w-[70%] focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
@@ -172,12 +173,13 @@ function ChatPatient({ visible, setVisible, data }) {
                   type="button"
                   class="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
                   onClick={async()=>{
-                    const subColRef = collection(db, `${user.assignD}`, `${user.number}`, "chat");
+                    const subColRef = collection(db, `${user.assignD}`, `${user.phone}`, "chat");
                     await addDoc(subColRef,{
                       message: messages,
                       messegefrom: "patient",
                       time: serverTimestamp()
                     });
+                    setMessages("")
                   }}
                 >
                   <span class="font-bold">Send</span>
