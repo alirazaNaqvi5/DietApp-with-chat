@@ -9,7 +9,7 @@ function Doctor() {
   const { user } = useAuth();
   const [visible, setVisible] = React.useState(false);
   const [data, setData] = React.useState([]);
-  const [NewMsg, setNewMsg] = React.useState([]);
+  const [NewMsg, setNewMsg] = React.useState([{"num":"+923318148879"},{"num":"+923224811102"}]);
   const [ActiveChat, setActiveChat] = React.useState("");
 
   React.useEffect(() => {
@@ -29,8 +29,7 @@ function Doctor() {
         const docs = qSnap.docs.map((doc) => {
           // console.log(doc.id);
           return doc.data();
-        }
-        );
+        });
         setData(docs);
       }
       );
@@ -47,16 +46,15 @@ function Doctor() {
       //   setNewMsg(docs);
       // }
       // );
-      const docRef = collection(db, `${user.phone}`, "msgs");
+      const docRef = collectionGroup(db, `${user.phone}`);
       // const docSnap = await getDocs(docRef);
       onSnapshot(query(docRef), (qSnap) => {
         const docs = qSnap.docs.map((doc) => {
           // console.log(doc.id);
-          return doc.data();
+          return doc.id;
         }
         );
         console.log(docs);
-        // setData(docs);
       }
       );
       // setNewMsg(docSnap.docs);
@@ -79,7 +77,7 @@ function Doctor() {
 
     })();
 
-  }, []);
+  }, [ActiveChat]);
   return (
     <>
       <section class="text-gray-600 body-font">
@@ -114,11 +112,12 @@ function Doctor() {
                 {NewMsg.map((msg, i) => {
 
                   return <div className="p-2 lg:w-auto md:w-1/2 w-auto cursor-pointer" key={i}  onClick={()=>{
-                    setActiveChat(msg.sender);
+                    setActiveChat(msg.num);
+                    setVisible(true);
                   }} >
                     <div className="h-full flex items-center border-gray-200 border p-4 rounded-lg">
                       <div className="flex-grow">
-                        <h2 className="text-gray-900 title-font font-medium">{msg.sender}</h2>
+                        <h2 className="text-gray-900 title-font font-medium">{msg.num}</h2>
 
                       </div>
                     </div>
