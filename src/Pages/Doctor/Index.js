@@ -9,22 +9,28 @@ function Doctor() {
   const { user } = useAuth();
   const [visible, setVisible] = React.useState(false);
   const [data, setData] = React.useState([]);
-  const [NewMsg, setNewMsg] = React.useState([{"num":"+923318148879"},{"num":"+923224811102"}]);
-  const [ActiveChat, setActiveChat] = React.useState("");
+  const [NewMsg, setNewMsg] = React.useState([]);
+  const [ActiveChat, setActiveChat] = React.useState("+923058720000");
 
   React.useEffect(() => {
     console.log(NewMsg);
+
+    
     (async () => {
+
+      const citiesRef = collection(db, "users");
+      const q = query(citiesRef, where("assignD", "==", `${user.phone}`));
+      const querySnapshot = await getDocs(q);
+      console.log("querfyyyyyy", querySnapshot)
+          querySnapshot.forEach((doc) => {
+              // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+          // setRecord (doc.data());
+          setNewMsg([...NewMsg,doc.data()]);
+          });
+
       const subColRef = collection(db, `${user.phone}`, `${ActiveChat}`, "chat");
-      // odd number of path segments to get a CollectionReference
 
-      // equivalent to:
-      // .collection("collection_name/doc_name/subcollection_name") in v8
-
-      // use getDocs() instead of getDoc() to fetch the collection
-
-      // const qSnap =await getDocs(subColRef)
-      // get realtime messages
       onSnapshot(query(subColRef, orderBy('time')), (qSnap) => {
         const docs = qSnap.docs.map((doc) => {
           // console.log(doc.id);
@@ -33,50 +39,13 @@ function Doctor() {
         setData(docs);
       }
       );
-      // setData(qSnap.docs.map(d => (d.data())).reverse())
-      // console.log(qSnap.docs.map(d => (d.data())))
-
-
-      // onSnapshot(collection(db, `${user.phone}`), (qSnap) => {
-      //   const docs = qSnap.docs.forEach((doc) => {
-      //     console.log(doc.id);
-      //     return doc.id;
-      //   }
-      //   );
-      //   setNewMsg(docs);
-      // }
-      // );
-      const docRef = collectionGroup(db, `${user.phone}`);
-      // const docSnap = await getDocs(docRef);
-      onSnapshot(query(docRef), (qSnap) => {
-        const docs = qSnap.docs.map((doc) => {
-          // console.log(doc.id);
-          return doc.id;
-        }
-        );
-        console.log(docs);
-      }
-      );
-      // setNewMsg(docSnap.docs);
-      // getDocs(docRef).then((docSnap) => {
-        // docSnap.docs.forEach((doc) => {
-          // console.log(doc.id);
-          // console.log(docSnap)
-          // setNewMsg([...NewMsg, {"sender":doc.id}]);
-        // })
-      // });
-      // const d =[];
-      // docSnap.forEach((doc) => {
-      //   // console.log(doc.id);
-      //   console.log(doc.id, " => ", doc.data());
-      //   return setNewMsg([...NewMsg, doc.id]);
-      // })
-      // console.log("fksdhfkjsdhfsdjkfhsdjkfh==========",NewMsg);
-      // setNewMsg(d);
-      console.log("fksdhfkjsdhfsdjkfhsdjkfh==========",NewMsg);
+    
 
     })();
 
+    return () => {
+      setNewMsg([])
+  }
   }, [ActiveChat]);
   return (
     <>
@@ -112,12 +81,12 @@ function Doctor() {
                 {NewMsg.map((msg, i) => {
 
                   return <div className="p-2 lg:w-auto md:w-1/2 w-auto cursor-pointer" key={i}  onClick={()=>{
-                    setActiveChat(msg.num);
+                    setActiveChat(msg.phone);
                     setVisible(true);
                   }} >
                     <div className="h-full flex items-center border-gray-200 border p-4 rounded-lg">
                       <div className="flex-grow">
-                        <h2 className="text-gray-900 title-font font-medium">{msg.num}</h2>
+                        <h2 className="text-gray-900 title-font font-medium">{msg.name}</h2>
 
                       </div>
                     </div>

@@ -1,7 +1,12 @@
 import React from 'react'
 import Modal from '../../components/Modal';
+import PopUp from './PopUp';
+import { db } from "../../firebase";
+import { collection, query, where, getDocs, doc, setDoc } from "firebase/firestore";
 
 export default function Admin() {
+  const [showModal, setShowModal] = React.useState(false);
+  const [data, setData ] = React.useState([]);
   return (
 
         <>
@@ -35,7 +40,21 @@ export default function Admin() {
             <div className="flex-grow">
               <h2 className="text-gray-900 text-lg title-font font-medium mb-3">Add user's</h2>
               <p className="leading-relaxed text-base">Here you can easily add user's to your website.</p>
-              <button className="mt-3 text-white bg-green-500 border-0 py-1 px-2  text-1xl font-bold focus:outline-none hover:bg-green-600 rounded ">
+              <button 
+                onClick={async()=>{
+                  setData([])
+                  const citiesRef = collection(db, "users");
+                  const q = query(citiesRef);
+                  const querySnapshot = await getDocs(q);
+                      querySnapshot.forEach((doc) => {
+                          // doc.data() is never undefined for query doc snapshots
+                      console.log(doc.id, " => ", doc.data());
+                      // setRecord (doc.data());
+                      setData([...data,doc.data()]);
+                      });
+                      setShowModal(true)
+                }}
+                className="mt-3 text-white bg-green-500 border-0 py-1 px-2  text-1xl font-bold focus:outline-none hover:bg-green-600 rounded ">
                 Add users
               </button>
             </div>
@@ -92,6 +111,7 @@ export default function Admin() {
         </div>
       </div>
     </section>
+    <PopUp showModal={showModal} setShowModal={setShowModal} data={data} />
     </>
         
       );
