@@ -12,6 +12,8 @@ function Doctor() {
   const [NewMsg, setNewMsg] = React.useState([]);
   const [ActiveChat, setActiveChat] = React.useState("+923058720000");
 
+  const [MealPLans, setMealPlans] = React.useState([])
+
   React.useEffect(() => {
     console.log(NewMsg);
 
@@ -37,6 +39,20 @@ function Doctor() {
           return doc.data();
         });
         setData(docs);
+      }
+      );
+
+
+
+
+      const mealRef = collection(db, "MealPLans");
+
+      onSnapshot(mealRef, (qSnap) => {
+        const docs = qSnap.docs.map((doc) => {
+          // console.log(doc.id);
+          return doc.data();
+        });
+        setMealPlans(docs);
       }
       );
     
@@ -246,7 +262,41 @@ function Doctor() {
               </div>
             </div>
           </div>
-          <div className="">
+
+
+
+
+
+
+                  <h1 className="text-center"><strong>Meal PLans</strong></h1>
+          <div className="flex text-center lg:ml-auto mt-4 px-12">
+                
+                {
+                   MealPLans.map(({BreakFast, Carbs, Proteints, Fats, Lunch, Dinner}, i)=>{
+                    return (
+                        <div className="px-12 flex flex-col mx-5" key={i} style={{borderColor:'blue', borderWidth:'2px'}}>
+                          <h1><strong>Meal Plan {i+1}</strong></h1>
+                          <hr/>
+                          <h1>Breakfast : {BreakFast}</h1>
+                          <h1>Lunch : {Lunch}</h1>
+                          <h1> Dinner {Dinner}</h1>
+                          <h1> Fats {Fats}</h1>
+                          <h1> Proteints {Proteints}</h1>
+                          <h1>Carbs : {Carbs}</h1>
+
+                          {/* <button>Send to Current Chat</button> */}
+                        </div>
+                    )
+                   })
+                }
+
+
+          </div>
+
+
+
+
+          <div className="lg:mt-12">
             <label
               htmlFor="full-name"
               className="leading-7 text-sm text-gray-600"

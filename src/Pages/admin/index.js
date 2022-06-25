@@ -1,12 +1,13 @@
 import React from 'react'
 import Modal from '../../components/Modal';
-import PopUp from './PopUp';
-import { db } from "../../firebase";
-import { collection, query, where, getDocs, doc, setDoc } from "firebase/firestore";
+import AddMeal from './AddMeal';
+import Adduser from './Adduser';
+import RemoveUser from './RemoveUser';
 
 export default function Admin() {
-  const [showModal, setShowModal] = React.useState(false);
   const [data, setData ] = React.useState([]);
+  
+
   return (
 
         <>
@@ -37,27 +38,7 @@ export default function Admin() {
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             </div>
-            <div className="flex-grow">
-              <h2 className="text-gray-900 text-lg title-font font-medium mb-3">Add user's</h2>
-              <p className="leading-relaxed text-base">Here you can easily add user's to your website.</p>
-              <button 
-                onClick={async()=>{
-                  setData([])
-                  const citiesRef = collection(db, "users");
-                  const q = query(citiesRef);
-                  const querySnapshot = await getDocs(q);
-                      querySnapshot.forEach((doc) => {
-                          // doc.data() is never undefined for query doc snapshots
-                      console.log(doc.id, " => ", doc.data());
-                      // setRecord (doc.data());
-                      setData([...data,doc.data()]);
-                      });
-                      setShowModal(true)
-                }}
-                className="mt-3 text-white bg-green-500 border-0 py-1 px-2  text-1xl font-bold focus:outline-none hover:bg-green-600 rounded ">
-                Add users
-              </button>
-            </div>
+            <Adduser/>
           </div>
           <div className="flex flex-col mb-10 lg:items-start items-center">
             <div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-5">
@@ -66,52 +47,29 @@ export default function Admin() {
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             </div>
-            <div className="flex-grow">
+            {/* <div className="flex-grow">
               <h2 className="text-gray-900 text-lg title-font font-medium mb-3">Remove user's</h2>
               <p className="leading-relaxed text-base">From here you can easily remove/block users from your website.</p>
               <button className="mt-3 text-white bg-green-500 border-0 py-1 px-2  text-1xl font-bold focus:outline-none hover:bg-green-600 rounded ">
                 Remove users
               </button>
-            </div>
+            </div> */}
+            <RemoveUser/>
           </div>
          
         </div>
       </div>
     </section>
-    <section className="text-gray-600 body-font">
-      <div className="container px-5 py-24 mx-auto flex flex-wrap">
-        <div className="flex flex-wrap -m-4">
-          <div className="p-4 lg:w-1/2 md:w-full">
-            <div className="flex border-2 rounded-lg border-gray-200 border-opacity-50 p-8 sm:flex-row flex-col">
-              <div className="w-16 h-16 sm:mr-8 sm:mb-0 mb-4 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 flex-shrink-0">
-              </div>
-              <div className="flex-grow">
-                <h2 className="text-gray-900 text-lg title-font font-medium mb-3">Add meal/diet plan</h2>
-                <p className="leading-relaxed text-base">Here you can easily add meal/diet plan's to your website</p>
-                <button className="mt-3 text-white bg-red-500  border-0 py-1 px-2  text-1xl font-bold focus:outline-none hover:bg-red-700 rounded ">
-                Add meal
-              </button>
-              </div>
-            </div>
+    <section className="text-gray-600 body-font w-full ">
+      <div className="container px-5 py-24 mx-auto flex flex-wrap w-full">
+        <div className="flex flex-wrap w-full">
+          <div className="p-4 lg:w-1/2 w-full md:w-full">
+            <AddMeal/>
           </div>
-          <div className="p-4 lg:w-1/2 md:w-full">
-            <div className="flex border-2 rounded-lg border-gray-200 border-opacity-50 p-8 sm:flex-row flex-col">
-              <div className="w-16 h-16 sm:mr-8 sm:mb-0 mb-4 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 flex-shrink-0">
-                
-              </div>
-              <div className="flex-grow">
-                <h2 className="text-gray-900 text-lg title-font font-medium mb-3">Remove meal/diet plan</h2>
-                <p className="leading-relaxed text-base">Here you can easily remove meal/diet plan's from your website</p>
-                <button className="mt-3 text-white bg-red-500 border-0 py-1 px-2  text-1xl font-bold focus:outline-none hover:bg-red-700 rounded ">
-                Remove meal
-              </button>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
     </section>
-    <PopUp showModal={showModal} setShowModal={setShowModal} data={data} />
     </>
         
       );
